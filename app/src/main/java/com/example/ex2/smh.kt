@@ -16,8 +16,9 @@ open class SmartDevice(val name: String, val category: String) {
         deviceStatus = "off"
     }
 
-    override fun toString(): String {
-        return "SmartDevice(name='$name', category='$category', deviceStatus='$deviceStatus', deviceType='$deviceType')"
+    // Phương thức printDeviceInfo() để in thông tin của thiết bị
+    fun printDeviceInfo() {
+        println("Device name: $name, category: $category, type: $deviceType")
     }
 }
 
@@ -30,40 +31,33 @@ class SmartTvDevice(deviceName: String, deviceCategory: String) :
 
     private var channelNumber by RangeRegulator(initialValue = 1, minValue = 0, maxValue = 200)
 
+    // Phương thức tăng âm lượng
     fun increaseSpeakerVolume() {
         speakerVolume++
         println("Speaker volume increased to $speakerVolume.")
     }
 
-    fun decreaseSpeakerVolume() {
+    // Phương thức giảm âm lượng
+    fun decreaseVolume() {
         speakerVolume--
         println("Speaker volume decreased to $speakerVolume.")
     }
 
-    fun nextChannel() {
-        channelNumber++
-        println("Channel number increased to $channelNumber.")
-    }
 
+    // Phương thức chuyển về kênh trước đó
     fun previousChannel() {
         channelNumber--
         println("Channel number decreased to $channelNumber.")
     }
 
+    fun nextChannel() {
+        channelNumber++
+        println("Channel number increased to $channelNumber.")
 
-    override fun turnOn() {
-        super.turnOn()
-        println(
-            "$name is turned on. Speaker volume is set to $speakerVolume and channel number is " +
-                    "set to $channelNumber."
-        )
     }
-
-    override fun turnOff() {
-        super.turnOff()
-        println("$name turned off")
-    }
+    // Các phương thức khác như trước
 }
+
 
 class SmartLightDevice(deviceName: String, deviceCategory: String) :
     SmartDevice(name = deviceName, category = deviceCategory) {
@@ -72,87 +66,111 @@ class SmartLightDevice(deviceName: String, deviceCategory: String) :
 
     private var brightnessLevel by RangeRegulator(initialValue = 0, minValue = 0, maxValue = 100)
 
+    // Phương thức tăng độ sáng
     fun increaseBrightness() {
         brightnessLevel++
         println("Brightness increased to $brightnessLevel.")
     }
 
+
+    // Phương thức giảm độ sáng
     fun decreaseBrightness() {
         brightnessLevel--
         println("Brightness decreased to $brightnessLevel.")
     }
 
-    override fun turnOn() {
-        super.turnOn()
-        brightnessLevel = 2
-        println("$name turned on. The brightness level is $brightnessLevel.")
-    }
-
-    override fun turnOff() {
-        super.turnOff()
-        brightnessLevel = 0
-        println("Smart Light turned off")
-    }
+    // Các phương thức khác như trước
 }
+
 
 class SmartHome(
     val smartTvDevice: SmartTvDevice,
     val smartLightDevice: SmartLightDevice
 ) {
+
     var deviceTurnOnCount = 0
         private set
 
+    // Các phương thức kiểm tra trạng thái thiết bị và tăng/giảm đếm
     fun turnOnTv() {
-        deviceTurnOnCount++
-        smartTvDevice.turnOn()
+        if (smartTvDevice.deviceStatus == "on") {
+            deviceTurnOnCount++
+            smartTvDevice.turnOn()
+        }
     }
 
     fun turnOffTv() {
-        deviceTurnOnCount--
-        smartTvDevice.turnOff()
+        if (smartTvDevice.deviceStatus == "on") {
+            deviceTurnOnCount--
+            smartTvDevice.turnOff()
+        }
     }
 
     fun increaseTvVolume() {
-        smartTvDevice.increaseSpeakerVolume()
+        if (smartTvDevice.deviceStatus == "on") {
+            smartTvDevice.increaseSpeakerVolume()
+        }
     }
 
     fun decreaseTvVolume() {
-        smartTvDevice.decreaseSpeakerVolume()
+        if (smartTvDevice.deviceStatus == "on") {
+            smartTvDevice.decreaseVolume()
+        }
     }
 
     fun changeTvChannelToNext() {
-        smartTvDevice.nextChannel()
+        if (smartTvDevice.deviceStatus == "on") {
+            smartTvDevice.nextChannel()
+        }
     }
 
     fun changeTvChannelToPrevious() {
-        smartTvDevice.previousChannel()
+        if (smartTvDevice.deviceStatus == "on") {
+            smartTvDevice.previousChannel()
+        }
     }
 
     fun turnOnLight() {
-        deviceTurnOnCount++
-        smartLightDevice.turnOn()
+        if (smartLightDevice.deviceStatus == "on") {
+            deviceTurnOnCount++
+            smartLightDevice.turnOn()
+        }
     }
 
     fun turnOffLight() {
-        deviceTurnOnCount--
-        smartLightDevice.turnOff()
+        if (smartLightDevice.deviceStatus == "on") {
+            deviceTurnOnCount--
+            smartLightDevice.turnOff()
+        }
     }
 
     fun increaseLightBrightness() {
-        smartLightDevice.increaseBrightness()
+        if (smartLightDevice.deviceStatus == "on") {
+            smartLightDevice.increaseBrightness()
+        }
     }
 
     fun decreaseLightBrightness() {
-        smartLightDevice.decreaseBrightness()
+        if (smartLightDevice.deviceStatus == "on") {
+            smartLightDevice.decreaseBrightness()
+        }
     }
 
     fun turnOffAllDevices() {
         turnOffTv()
         turnOffLight()
     }
+
+    // Phương thức in thông tin của SmartTvDevice
+    fun printSmartTvInfo() {
+        smartTvDevice.printDeviceInfo()
+    }
+
+    // Phương thức in thông tin của SmartLightDevice
+    fun printSmartLightInfo() {
+        smartLightDevice.printDeviceInfo()
+    }
 }
-
-
 
 
 class RangeRegulator(
@@ -182,9 +200,15 @@ fun main() {
     smartHome.turnOnTv()
     smartHome.increaseTvVolume()
     smartHome.changeTvChannelToNext()
+    smartHome.decreaseTvVolume()
+    smartHome.changeTvChannelToPrevious()
 
     smartHome.turnOnLight()
     smartHome.increaseLightBrightness()
+    smartHome.decreaseLightBrightness()
+
+    smartHome.printSmartTvInfo()
+    smartHome.printSmartLightInfo()
 
     smartHome.turnOffAllDevices()
 }
